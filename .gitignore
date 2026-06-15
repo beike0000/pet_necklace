@@ -3,3 +3,16 @@ Thumbs.db
 *.log
 node_modules/
 __pycache__/
+
+# Local verification artifacts
+tmp_*.png
+tmp_*.jpg
+tmp_*.jpeg
+tmp_*.webp
+tmp_*.glb
+*.tmp
+server.out.log
+server.err.log
+
+# Editor / system noise
+.vscode/

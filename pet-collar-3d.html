@@ -4,9 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>宠物智能健康项圈 · 3D 演示</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -64,6 +61,17 @@ canvas{display:block}
 .sw b{font-weight:600;font-size:13px;display:block;letter-spacing:.02em}
 .sw span{font-size:10.5px;color:var(--ink-dim);letter-spacing:.04em}
 
+/* form switch (segmented) */
+.form-switch{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:12px;padding:4px;gap:4px}
+.fs-opt{flex:1;text-align:center;padding:9px 4px 8px;border-radius:9px;cursor:pointer;
+  font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-dim);transition:all .2s}
+.fs-opt:hover{color:var(--ink)}
+.fs-opt.on{background:linear-gradient(120deg,rgba(124,245,196,.18),rgba(70,211,255,.18));
+  color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.fs-opt small{display:block;font-size:9px;font-weight:400;color:var(--ink-dim);margin-top:3px;letter-spacing:.02em}
+.fs-opt.on small{color:var(--accent)}
+
 /* slider */
 .slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
 .slider-row .val{font-family:'Sora';font-weight:600;font-size:15px;color:var(--accent)}
@@ -77,6 +85,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 input[type=range]::-webkit-slider-thumb:active{transform:scale(1.18);cursor:grabbing}
 .size-tags{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;
   color:var(--ink-dim);letter-spacing:.05em}
+.scale-presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:7px;margin-top:10px}
+.scale-preset{border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--ink-dim);
+  border-radius:10px;padding:8px 4px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;
+  letter-spacing:.03em;transition:background .2s,border-color .2s,color .2s}
+.scale-preset:hover{color:var(--ink);border-color:var(--line-2)}
+.scale-preset.on{color:var(--ink);border-color:rgba(124,245,196,.55);
+  background:linear-gradient(120deg,rgba(124,245,196,.13),rgba(70,211,255,.10))}
+.scale-preset small{display:block;margin-top:2px;font-size:9px;font-weight:400;color:var(--ink-dim)}
 
 /* toggles */
 .toggle{display:flex;align-items:center;justify-content:space-between;
@@ -187,47 +203,64 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.18);cursor:grab
 </div>
 
 <div class="panel">
+  <div class="sec">产品形态</div>
+  <div class="form-switch" id="formSwitch">
+    <div class="fs-opt on" data-form="integrated">一体式<small>C 型开合 · 柔性适配</small></div>
+    <div class="fs-opt" data-form="clip" style="display:none">夹扣式<small>单模块 · 夹任意项圈</small></div>
+  </div>
+
   <div class="sec">外观风格</div>
   <div class="styles" id="styles"></div>
 
   <div class="sec">颈围尺寸</div>
   <div class="slider-row">
     <span class="lab" id="petType">小型犬 · 猫</span>
-    <span class="val"><span id="sizeVal">32</span><small>cm</small></span>
+    <span class="val"><span id="sizeVal">56</span><small>cm</small></span>
   </div>
-  <input type="range" id="size" min="16" max="55" value="32" step="1" />
-  <div class="size-tags"><span>猫·小型犬</span><span>中型犬</span><span>大型犬</span></div>
+  <input type="range" id="size" min="16" max="60" value="56" step="1" />
+  <div class="size-tags"><span>小型</span><span>中型</span><span>52-60cm 实机</span></div>
+  <div class="scale-presets" id="scalePresets">
+    <button class="scale-preset" data-size="52" data-tube="60">52cm<small>L-</small></button>
+    <button class="scale-preset" data-size="54" data-tube="60">54cm<small>标准</small></button>
+    <button class="scale-preset on" data-size="56" data-tube="60">56cm<small>推荐</small></button>
+    <button class="scale-preset" data-size="58" data-tube="60">58cm<small>L+</small></button>
+    <button class="scale-preset" data-size="60" data-tube="62">60cm<small>加大</small></button>
+  </div>
 
   <div class="sec">比例微调</div>
   <div class="slider-row">
     <span class="lab">项圈带宽</span>
-    <span class="val"><span id="tubeVal">100</span><small>%</small></span>
+    <span class="val"><span id="tubeVal">60</span><small>%</small></span>
   </div>
-  <input type="range" id="tube" min="60" max="160" value="100" step="2" />
-  <div class="slider-row" style="margin-top:15px">
-    <span class="lab">模块大小</span>
-    <span class="val"><span id="modVal">100</span><small>%</small></span>
+  <input type="range" id="tube" min="50" max="130" value="60" step="2" />
+  <div id="rowModSize">
+    <div class="slider-row" style="margin-top:15px">
+      <span class="lab">模块大小</span>
+      <span class="val"><span id="modVal">100</span><small>%</small></span>
+    </div>
+    <input type="range" id="modSize" min="60" max="160" value="100" step="2" />
   </div>
-  <input type="range" id="modSize" min="60" max="160" value="100" step="2" />
 
   <div class="sec">显示选项</div>
-  <div class="toggle"><label>传感器标注</label><div class="switch on" id="tgTags"></div></div>
+  <div class="toggle" id="rowTags"><label>传感器标注</label><div class="switch on" id="tgTags"></div></div>
   <div class="toggle"><label>自动旋转</label><div class="switch on" id="tgSpin"></div></div>
   <div class="toggle"><label>呼吸灯效果</label><div class="switch on" id="tgPulse"></div></div>
-  <div class="toggle"><label>安装详图（爆炸视图）</label><div class="switch" id="tgDetail"></div></div>
+  <div class="toggle" id="rowDetail"><label>安装详图（爆炸视图）</label><div class="switch" id="tgDetail"></div></div>
 
   <div class="btns">
     <button class="btn" id="btnShot">
       <svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>截图</button>
     <button class="btn" id="btnReset">
       <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 2.3 5.6"/><path d="M4 20v-5h5"/></svg>视角复位</button>
+    <button class="btn full" id="btnWear">
+      <svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 0 1 12 0"/><path d="M5 13c0 5 14 5 14 0"/><path d="M8 15v3M16 15v3"/></svg>佩戴动画</button>
     <button class="btn full" id="btnExport">
       <svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>导出 GLB 模型文件</button>
   </div>
 </div>
 
 <div class="specs" id="specs"></div>
-<div class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点击模块查看详情</div>
+<div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点击圆环查看内部结构</div>
 
 <!-- 模块大图详情卡 -->
 <div class="modcard" id="modCard">
@@ -249,8 +282,8 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.18);cursor:grab
 
 <script type="importmap">
 { "imports": {
-  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/"
 }}
 </script>
 <script type="module">
@@ -263,10 +296,12 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { STYLES, ICON, SENSORS, REF_R, displayScale, petTypeOf } from './modules/data.js';
 
 let scene, camera, renderer, labelRenderer, controls, env;
-let collarGroup, leds = [], tagObjs = [], clock = new THREE.Clock();
-let state = { style:'sport', size:32, tags:true, spin:false, pulse:true, detail:false, tubeScale:1, moduleScale:1 };
+let collarGroup, leds = [], glowMats = [], tagObjs = [], clock = new THREE.Clock();
+let state = { form:'integrated', style:'sport', size:56, tags:true, spin:true, pulse:true, detail:false, tubeScale:0.60, moduleScale:1, power:true };
 // 安装详图（爆炸视图）相关
 let lifts = [], moduleGroups = [], detailTags = [], podGroup = null;
+let powerLed = null;
+let adjusterRod = null, rodRadius = 0, rodZ = 0, trackA0 = 0, trackA1 = 0, curRodT = 0, targetScale = 1, draggingRod = false;
 const podWorld = new THREE.Vector3();
 let explodeF = 0, focusF = 0;            // 当前插值
 let savedCam = new THREE.Vector3(), savedTarget = new THREE.Vector3();
@@ -277,6 +312,9 @@ let focusedTarget = new THREE.Vector3();  // 聚焦目标世界坐标
 let focusedCamPos = new THREE.Vector3();  // 聚焦相机目标位置
 let focusModuleF = 0;                     // 模块聚焦插值
 let savedCam2 = new THREE.Vector3(), savedTarget2 = new THREE.Vector3();
+let cOpenHandle = null, cOpenParts = null, cOpenValue = 0, targetCOpen = 0;
+let draggingCOpen = false, cOpenDragStart = null, cOpenRestoreSpin = true;
+let autoSpinSpeed = 0;
 
 /* ---- 跨页面实时同步（主页 ↔ modules/detail.html） ---- */
 const SYNC_KEYS = ['style','size','tubeScale','moduleScale'];
@@ -287,19 +325,29 @@ function broadcastState(){
 }
 syncCh.onmessage = (e)=>{
   const m=e.data; if(!m||m.type!=='state') return;
-  let changed=false;
-  SYNC_KEYS.forEach(k=>{ if(m.state[k]!==undefined && m.state[k]!==state[k]){ state[k]=m.state[k]; changed=true; } });
-  if(changed){ syncUIFromState(); buildCollar(); }
+  let sizeChanged=false, otherChanged=false;
+  SYNC_KEYS.forEach(k=>{ if(m.state[k]!==undefined && m.state[k]!==state[k]){ state[k]=m.state[k]; if(k==='size') sizeChanged=true; else otherChanged=true; } });
+  if(otherChanged){ syncUIFromState(); buildCollar(); }
+  else if(sizeChanged){ syncUIFromState(); targetScale = displayScale(state.size); }  // 只动尺寸：动画，不重建
 };
 function syncUIFromState(){
   document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on', x.dataset.k===state.style));
   const sz=document.getElementById('size'); if(sz){ sz.value=state.size; document.getElementById('sizeVal').textContent=state.size; document.getElementById('petType').textContent=petTypeOf(state.size); }
   const tb=document.getElementById('tube'); if(tb){ tb.value=Math.round(state.tubeScale*100); document.getElementById('tubeVal').textContent=Math.round(state.tubeScale*100); }
   const ms=document.getElementById('modSize'); if(ms){ ms.value=Math.round(state.moduleScale*100); document.getElementById('modVal').textContent=Math.round(state.moduleScale*100); }
+  syncPresetUI();
 }
 function openDetail(sensor){
   const u=new URLSearchParams({id:sensor.id, style:state.style, size:state.size, tubeScale:state.tubeScale, moduleScale:state.moduleScale});
   window.open('modules/detail.html?'+u.toString(), 'mod_'+sensor.id);
+}
+function openInternals(){
+  const u=new URLSearchParams({style:state.style, size:state.size, tubeScale:state.tubeScale, moduleScale:state.moduleScale});
+  window.open('modules/internals.html?'+u.toString(), 'collar_internals');
+}
+function openWearDemo(){
+  const u=new URLSearchParams({style:state.style, size:state.size, tubeScale:state.tubeScale});
+  window.open('wearing-demo.html?'+u.toString(), 'collar_wear_demo');
 }
 
 function init(){
@@ -378,84 +426,935 @@ function init(){
 
 /* 几何统一用 REF_R 构建，再由 buildCollar 末尾的 collarGroup.scale 等比缩放，保证比例恒定 */
 
-/* ---------- 构建项圈 ---------- */
+/* ---------- 构建项圈（按形态分发） ---------- */
 function buildCollar(){
   if(collarGroup){ scene.remove(collarGroup); disposeGroup(collarGroup); }
   if(labelRenderer) labelRenderer.domElement.replaceChildren();
-  leds = []; tagObjs = []; lifts = []; moduleGroups = []; detailTags = []; podGroup = null;
+  leds = []; glowMats = []; tagObjs = []; lifts = []; moduleGroups = []; detailTags = []; podGroup = null; powerLed = null; adjusterRod = null;
+  cOpenHandle = null; cOpenParts = null; cOpenValue = 0; targetCOpen = 0; draggingCOpen = false; cOpenDragStart = null;
   collarGroup = new THREE.Group();
-  const S = STYLES[state.style];
-  const R = REF_R;                         // 几何始终用参考半径构建，比例恒定
-  const tube = S.tube * state.tubeScale;   // 项圈带宽：手动滑块倍率
+  if(state.form === 'clip') buildClipCollar();
+  else buildIntegratedCollar();
+  collarGroup.rotation.x = -0.62;
+  targetScale = displayScale(state.size);
+  collarGroup.scale.setScalar(targetScale);
+  curRodT = (state.size-16)/(60-16);
+  if(adjusterRod) positionRod();
+  scene.add(collarGroup);
+  applyTagVisibility();
+  applyDetailVisibility();
+  updateSpecs();
+  applyFormUI();
+}
 
-  // 材质
-  const matBand = new THREE.MeshStandardMaterial({ color:S.band, roughness:S.bandRough, metalness:S.bandMetal, envMapIntensity:1.1 });
+function placeOnRing(obj, angle, radius, z = 0) {
+  obj.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, z);
+  obj.rotation.z = angle - Math.PI / 2;
+  return obj;
+}
+
+function flatArc(radius, width, z, start, length, mat, segments = 96) {
+  const mesh = new THREE.Mesh(new THREE.RingGeometry(radius - width, radius + width, 10, segments, start, length), mat);
+  mesh.position.z = z;
+  return mesh;
+}
+
+function tubeArc(radius, tubeRadius, center, length, mat, radial = 40, tubular = 180) {
+  const mesh = new THREE.Mesh(new THREE.TorusGeometry(radius, tubeRadius, radial, tubular, length), mat);
+  mesh.rotation.z = center - length / 2;
+  return mesh;
+}
+
+function roundedPart(w, h, d, mat, radius = 0.04) {
+  return new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 4, Math.min(radius, w * 0.18, h * 0.18, d * 0.45)), mat);
+}
+
+/* ---------- 形态 A：一体式硬项圈（高级硬件产品化版本） ----------
+ * 外观保持净面配饰感，但把后颈主控仓、贴肤传感窗、天线、磁吸充电、
+ * 棘轮调节和复合层结构都以可制造的方式表达出来。
+ */
+function buildIntegratedCollarLegacy(){
+  const S = STYLES[state.style];
+  const R = REF_R;
+  const tube = S.tube * state.tubeScale;
+
+  // 外饰层：按风格呈现硅胶 / 皮革 / 陶瓷 / 金属质感。
+  const matBand = new THREE.MeshPhysicalMaterial({ color:S.band, roughness:S.bandRough, metalness:S.bandMetal,
+    clearcoat: S.bandMetal>0.3 ? 0.6 : 0.12, clearcoatRoughness:0.35, envMapIntensity:1.3 });
+  if(S.fabric){ matBand.roughness = 0.9; matBand.metalness = 0; }
+  const matCore = new THREE.MeshStandardMaterial({ color:0x06080c, roughness:0.86, metalness:0.08 });
+  const matWear = new THREE.MeshPhysicalMaterial({ color:S.fabric ? S.band : 0x222832, roughness:S.fabric ? 0.86 : 0.72, metalness:0.04, clearcoat:0.10, clearcoatRoughness:0.55 });
+  const matKevlar = new THREE.MeshStandardMaterial({ color:0x111820, roughness:0.74, metalness:0.1 });
+  const matGasket = new THREE.MeshStandardMaterial({ color:0x030506, roughness:0.92, metalness:0 });
+  const matInlay = new THREE.MeshStandardMaterial({ color:S.accent, roughness:0.35, metalness:0.6,
+    emissive:S.accent, emissiveIntensity:0.3 });
+  const matSkin = new THREE.MeshPhysicalMaterial({ color:0x0b0d10, roughness:0.18, metalness:0.15, clearcoat:1, clearcoatRoughness:0.08, envMapIntensity:1.4 });
+
+  const hardCenter = Math.PI / 2;
+  const hardLen = Math.PI * 0.96;
+  const strapLen = Math.PI * 0.55;
+  const leftStrapCenter = -Math.PI / 2 - 0.73;
+  const rightStrapCenter = -Math.PI / 2 + 0.73;
+  const hardGroup = new THREE.Group();
+  hardGroup.userData.isCollar = true;
+  const wearGroup = new THREE.Group();
+  wearGroup.userData.isCollar = true;
+
+  // ---- 1. 上半段硬质电子保护梁：保护主控、电池、天线和 FPC ----
+  const core = tubeArc(R, tube * 0.70, hardCenter, hardLen, matCore, 40, 220);
+  core.scale.set(1, 1, S.bandFlat * 0.78);
+  core.castShadow = core.receiveShadow = true;
+  hardGroup.add(core);
+
+  const band = tubeArc(R, tube, hardCenter, hardLen, matBand, 56, 260);
+  band.scale.set(1, 1, S.bandFlat);
+  band.castShadow = band.receiveShadow = true;
+  hardGroup.add(band);
+
+  // ---- 2. 下半段柔性亲肤穿戴带：负责打开、闭合与适配不同体型 ----
+  for (const center of [leftStrapCenter, rightStrapCenter]) {
+    const strapCore = tubeArc(R, tube * 0.55, center, strapLen, matKevlar, 26, 120);
+    strapCore.scale.set(1, 1, S.bandFlat * 0.56);
+    strapCore.castShadow = strapCore.receiveShadow = true;
+    wearGroup.add(strapCore);
+    const strap = tubeArc(R, tube * 0.72, center, strapLen, matWear, 34, 140);
+    strap.scale.set(1, 1, S.bandFlat * 0.62);
+    strap.castShadow = strap.receiveShadow = true;
+    wearGroup.add(strap);
+  }
+  collarGroup.add(hardGroup, wearGroup);
+  moduleGroups.push(hardGroup, wearGroup);
+
+  const zFace = tube * S.bandFlat;
+  hardGroup.add(flatArc(R + tube * 0.80, tube * 0.018, zFace + 0.012, hardCenter - hardLen / 2, hardLen, matGasket, 160));
+  hardGroup.add(flatArc(R - tube * 0.80, tube * 0.018, zFace + 0.012, hardCenter - hardLen / 2, hardLen, matGasket, 160));
+  for (const center of [leftStrapCenter, rightStrapCenter]) {
+    wearGroup.add(flatArc(R + tube * 0.48, tube * 0.012, -zFace - 0.004, center - strapLen / 2, strapLen, matKevlar, 80));
+    wearGroup.add(flatArc(R - tube * 0.48, tube * 0.012, -zFace - 0.004, center - strapLen / 2, strapLen, matKevlar, 80));
+  }
+
+  // ---- 2. 外侧呼吸嵌线：只做细线，避免“外挂电子感” ----
+  const inlayR = Math.max(tube*0.05, 0.012);
+  const inlay = tubeArc(R + tube - inlayR, inlayR, hardCenter, hardLen * 0.86, matInlay, 14, 180);
+  inlay.scale.set(1, 1, S.bandFlat);
+  hardGroup.add(inlay);
+  glowMats.push(matInlay);
+
+  // ---- 3. 贴肤传感层：仅在柔性带内侧暴露，避免硬仓压颈 ----
+  for (const center of [leftStrapCenter, rightStrapCenter]) {
+    const skinRail = flatArc(R - tube * 0.68, tube * 0.030, zFace + 0.020, center - strapLen * 0.42, strapLen * 0.84, matSkin, 80);
+    wearGroup.add(skinRail);
+  }
+
+  // ---- 4. 外部必要接口与后颈主控仓 ----
+  const feats = makeRingFeatures(S, R, tube, S.bandFlat, state.size);
+  collarGroup.add(feats.group);
+  moduleGroups.push(feats.group);
+  podGroup = feats.podGroup;
+  powerLed = feats.powerLed;
+}
+
+/* ---------- 一体式硬项圈的工程细节 ---------- */
+function makeRingFeaturesLegacy(S, R, tube, bandFlat, size){
+  const g = new THREE.Group();
+  const zFace = tube*bandFlat;
+  const dorsal = Math.PI / 2;
+  const ventral = -Math.PI / 2;
+  const matRecess = new THREE.MeshStandardMaterial({color:0x07090c, roughness:0.45, metalness:0.3});
+  const matMetal = new THREE.MeshPhysicalMaterial({color:S.buckle, roughness:0.28, metalness:0.9, clearcoat:0.5, envMapIntensity:1.5});
+  const matAcc = new THREE.MeshStandardMaterial({color:S.accent, roughness:0.3, metalness:0.6, emissive:S.accent, emissiveIntensity:0.4});
+  const matPin = new THREE.MeshStandardMaterial({color:0xe8c87a, roughness:0.3, metalness:1.0});
+  const matTrack = new THREE.MeshStandardMaterial({color:0x05070a, roughness:0.7, metalness:0.2});
+  const matGlass = new THREE.MeshPhysicalMaterial({color:0x061015, roughness:0.08, metalness:0.05, clearcoat:1, clearcoatRoughness:0.03, envMapIntensity:1.8});
+  const matFpc = new THREE.MeshStandardMaterial({color:0x0d402c, roughness:0.5, metalness:0.18});
+  const matCopper = new THREE.MeshStandardMaterial({color:0xb88938, roughness:0.35, metalness:0.85});
+  const matBay = new THREE.MeshPhysicalMaterial({color:S.pod, roughness:S.podRough, metalness:S.podMetal, clearcoat:1, clearcoatRoughness:0.22, envMapIntensity:1.4});
+
+  // ---- 后颈主控仓：PC+ABS 密封仓，曲面嵌入，不做突兀外挂 ----
+  const pod = new THREE.Group();
+  const podGasket = roundedPart(tube * 2.35, tube * 1.02, tube * 0.20, matRecess, tube * 0.18);
+  const podShell = roundedPart(tube * 2.12, tube * 0.84, tube * 0.34, matBay, tube * 0.16);
+  const podPanel = roundedPart(tube * 1.34, tube * 0.40, tube * 0.045, matRecess, tube * 0.06);
+  podGasket.position.z = 0.010;
+  podShell.position.z = 0.095;
+  podPanel.position.z = 0.285;
+  pod.add(podGasket, podShell, podPanel);
+  for(const sx of [-1,1]){
+    const boss = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.060, tube * 0.060, tube * 0.030, 18), matMetal);
+    boss.rotation.x = Math.PI / 2;
+    boss.position.set(sx * tube * 0.82, 0, 0.320);
+    pod.add(boss);
+  }
+  for(let i=-1;i<=1;i++){
+    const chipLine = new THREE.Mesh(new THREE.BoxGeometry(tube * 0.24, tube * 0.018, tube * 0.018), matAcc);
+    chipLine.position.set(i * tube * 0.35, -tube * 0.16, 0.325);
+    pod.add(chipLine);
+  }
+  pod.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+  placeOnRing(pod, dorsal, R, zFace + 0.005);
+  g.add(pod);
+
+  // ---- 顶部天线区：GNSS/BLE FPC 天线朝上，远离地面 ----
+  g.add(flatArc(R + tube * 0.62, tube * 0.020, zFace + 0.052, dorsal - 0.46, 0.92, matCopper, 72));
+  g.add(flatArc(R + tube * 0.51, tube * 0.011, zFace + 0.057, dorsal - 0.34, 0.68, matAcc, 56));
+
+  // ---- FPC 柔性排线层：从主控仓沿带体走到传感窗 ----
+  g.add(flatArc(R - tube * 0.34, tube * 0.018, zFace + 0.026, -Math.PI * 0.84, Math.PI * 1.68, matFpc, 180));
+  for(let i=0;i<18;i++){
+    const a = -Math.PI * 0.80 + i * (Math.PI * 1.60 / 17);
+    const via = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.018, tube * 0.018, tube * 0.010, 10), matCopper);
+    via.rotation.x = Math.PI / 2;
+    via.position.set(Math.cos(a) * (R - tube * 0.34), Math.sin(a) * (R - tube * 0.34), zFace + 0.034);
+    g.add(via);
+  }
+
+  // ---- 贴肤传感窗口：PPG 绿光/红外 + 红外温区，带梳齿导毛 ----
+  const makeSkinCluster = (angle, accent, type)=>{
+    const c = new THREE.Group();
+    const base = roundedPart(tube * 0.88, tube * 0.38, tube * 0.050, matRecess, tube * 0.06);
+    base.position.z = 0.000; c.add(base);
+    const window = roundedPart(tube * 0.62, tube * 0.25, tube * 0.042, matGlass, tube * 0.05);
+    window.position.z = 0.045; c.add(window);
+    for(let i=-3;i<=3;i++){
+      const tooth = new THREE.Mesh(new THREE.BoxGeometry(tube * 0.035, tube * 0.42, tube * 0.020), matRecess);
+      tooth.position.set(i * tube * 0.105, -tube * 0.36, 0.058);
+      c.add(tooth);
+    }
+    if(type === 'ppg'){
+      for(const [x,col] of [[-0.16,0x39ff88],[0,0x39ff88],[0.16,0xff5b55]]){
+        const led = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.052, tube * 0.052, tube * 0.026, 18),
+          new THREE.MeshBasicMaterial({color:col}));
+        led.rotation.x = Math.PI / 2;
+        led.position.set(x * tube, 0, 0.085);
+        c.add(led);
+      }
+    } else {
+      const therm = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.100, tube * 0.100, tube * 0.026, 24),
+        new THREE.MeshStandardMaterial({color:accent, roughness:0.22, metalness:0.35, emissive:accent, emissiveIntensity:0.28}));
+      therm.rotation.x = Math.PI / 2;
+      therm.position.z = 0.083;
+      c.add(therm);
+    }
+    c.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+    placeOnRing(c, angle, R - tube * 0.74, zFace + 0.030);
+    g.add(c);
+  };
+  makeSkinCluster(ventral - 0.62, 0xff6b6b, 'ppg');
+  makeSkinCluster(ventral + 0.62, 0xffb454, 'temp');
+
+  // ---- 穿戴闭合结构：快拆扣 + 伸缩调节带。可打开佩戴，不再是封闭死环。----
+  const clasp = new THREE.Group();
+  clasp.userData.isCollar = true;
+  const y = -R;
+  const base = roundedPart(tube * 1.74, tube * 0.58, tube * 0.22, matTrack, tube * 0.08);
+  base.position.set(0, y, zFace + 0.030);
+  clasp.add(base);
+  const bridge = roundedPart(tube * 0.72, tube * 0.74, tube * 0.28, matAcc, tube * 0.10);
+  bridge.position.set(0, y, zFace + 0.115);
+  clasp.add(bridge);
+  for(const sx of [-1,1]){
+    const tail = roundedPart(tube * 1.18, tube * 0.34, tube * 0.080, matMetal, tube * 0.035);
+    tail.position.set(sx * tube * 0.66, y, zFace + 0.012);
+    clasp.add(tail);
+    const tab = roundedPart(tube * 0.18, tube * 0.44, tube * 0.10, matRecess, tube * 0.025);
+    tab.position.set(sx * tube * 0.66, y + sx * tube * 0.35, zFace + 0.150);
+    clasp.add(tab);
+  }
+  for(let i=-3;i<=3;i++){
+    const hole = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.035, tube * 0.035, 0.018, 14), matRecess);
+    hole.rotation.x = Math.PI / 2;
+    hole.position.set(-tube * 0.92 + i * tube * 0.14, y, zFace + 0.065);
+    clasp.add(hole);
+    const tooth = new THREE.Mesh(new THREE.BoxGeometry(tube * 0.050, tube * 0.30, 0.020), matPin);
+    tooth.position.set(tube * 0.33 + i * tube * 0.09, y, zFace + 0.070);
+    clasp.add(tooth);
+  }
+  const hinge = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.095, tube * 0.095, tube * 1.55, 18), matMetal);
+  hinge.rotation.y = Math.PI / 2;
+  hinge.position.set(0, y - tube * 0.32, zFace + 0.060);
+  clasp.add(hinge);
+  clasp.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+  g.add(clasp);
+
+  // ---- 触控按钮（右下侧，盲操可摸到但不破坏净面）----
+  const btnGroup = new THREE.Group();
+  btnGroup.userData.isButton = true;
+  const ab = ventral + 1.18;
+  const bx = Math.cos(ab)*R, by = Math.sin(ab)*R;
+  const pad = new THREE.Mesh(new THREE.CylinderGeometry(tube*0.34, tube*0.34, 0.026, 36), matRecess);
+  pad.rotation.x = Math.PI/2; pad.position.set(bx, by, zFace - 0.004); btnGroup.add(pad);
+  const ringAcc = new THREE.Mesh(new THREE.TorusGeometry(tube*0.34, tube*0.028, 10, 36), matAcc);
+  ringAcc.position.set(bx, by, zFace + 0.004); btnGroup.add(ringAcc);
+  const powerLed = new THREE.Mesh(new THREE.SphereGeometry(tube*0.075, 16, 16), new THREE.MeshBasicMaterial({color:S.accent}));
+  powerLed.position.set(bx, by, zFace + 0.016); powerLed.userData.baseColor = new THREE.Color(S.accent);
+  btnGroup.add(powerLed);
+  btnGroup.traverse(o=>{ if(o.isMesh) o.castShadow=true; });
+  g.add(btnGroup);
+
+  // ---- 磁吸充电口（左下侧，4pin pogo，无开口 IP68）----
+  const ac = ventral - 1.18;
+  const cxc = Math.cos(ac)*R, cyc = Math.sin(ac)*R;
+  const txc = -Math.sin(ac), tyc = Math.cos(ac);
+  const cpad = roundedPart(tube*0.72, tube*0.40, 0.026, matRecess, tube*0.06);
+  cpad.rotation.z = ac - Math.PI/2;
+  cpad.position.set(cxc, cyc, zFace - 0.003);
+  g.add(cpad);
+  for(let i=-1.5;i<=1.5;i++){
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(tube*0.04, tube*0.04, 0.02, 14), matPin);
+    pin.rotation.x = Math.PI/2;
+    pin.position.set(cxc + i*tube*0.15*txc, cyc + i*tube*0.15*tyc, zFace + 0.012);
+    g.add(pin);
+  }
+
+  return { group:g, powerLed, podGroup:pod };
+}
+
+/* ---------- 形态 A：净面一体式圆环 ----------
+ * 外观只保留触控键和磁吸充电口。主控、电池、FPC、天线和传感器都作为
+ * 圆环内部结构处理，避免外挂模块和块状舱体破坏佩戴安全与产品感。
+ */
+function buildIntegratedCollar(){
+  const S = STYLES[state.style];
+  const R = REF_R;
+  const tube = S.tube * state.tubeScale;
+  const openCenter = -Math.PI / 2;
+  const openGap = 1.46;
+
+  const matBand = new THREE.MeshPhysicalMaterial({
+    color:S.band,
+    roughness:S.fabric ? 0.82 : S.bandRough,
+    metalness:S.fabric ? 0.02 : S.bandMetal,
+    clearcoat:S.bandMetal > 0.3 ? 0.55 : 0.18,
+    clearcoatRoughness:S.fabric ? 0.65 : 0.28,
+    envMapIntensity:1.25
+  });
+  const matLiner = new THREE.MeshPhysicalMaterial({
+    color:S.fabric ? 0x15191f : 0x080a0d,
+    roughness:0.72,
+    metalness:0.02,
+    clearcoat:0.08,
+    clearcoatRoughness:0.5
+  });
+  const matSeal = new THREE.MeshStandardMaterial({ color:0x030507, roughness:0.88, metalness:0.02 });
+
+  const body = new THREE.Group();
+  body.userData.isCollar = true;
+
+  const shell = tubeArc(R, tube, openCenter + Math.PI, Math.PI * 2 - openGap, matBand, 72, 260);
+  shell.scale.set(1, 1, S.bandFlat);
+  shell.castShadow = shell.receiveShadow = true;
+  body.add(shell);
+
+  // Inner comfort liner: flush with the ring, so it reads as material design rather than a module.
+  const liner = tubeArc(R, tube * 0.62, openCenter + Math.PI, Math.PI * 2 - openGap * 1.08, matLiner, 48, 220);
+  liner.scale.set(1, 1, S.bandFlat * 0.74);
+  liner.castShadow = liner.receiveShadow = true;
+  body.add(liner);
+
+  // Very fine internal parting lines. They imply serviceability without drawing an external buckle.
+  const zFace = tube * S.bandFlat;
+  body.add(flatArc(R + tube * 0.82, tube * 0.010, zFace + 0.006, openCenter + openGap / 2, Math.PI * 2 - openGap, matSeal, 220));
+  body.add(flatArc(R - tube * 0.82, tube * 0.010, zFace + 0.006, openCenter + openGap / 2, Math.PI * 2 - openGap, matSeal, 220));
+  body.add(makeIntegratedSizingBand(S, R, tube, S.bandFlat, matLiner, matSeal));
+  body.add(makeHiddenWearOpening(S, R, tube, S.bandFlat, openCenter, openGap, matBand, matLiner, matSeal));
+
+  collarGroup.add(body);
+  moduleGroups.push(body);
+
+  const feats = makeRingFeatures(S, R, tube, S.bandFlat, state.size);
+  collarGroup.add(feats.group);
+  moduleGroups.push(feats.group);
+  podGroup = feats.podGroup;
+  powerLed = feats.powerLed;
+}
+
+function makeIntegratedSizingBand(S, R, tube, bandFlat, matLiner, matSeal){
+  const g = new THREE.Group();
+  const zFace = tube * bandFlat;
+  const center = Math.PI / 2;
+  const span = 0.78;
+  const matFlex = new THREE.MeshPhysicalMaterial({ color:0x0b1015, roughness:0.56, metalness:0.04, clearcoat:0.14, clearcoatRoughness:0.42 });
+  const matRail = new THREE.MeshStandardMaterial({ color:0x05070a, roughness:0.86, metalness:0.06 });
+  const matMag = new THREE.MeshPhysicalMaterial({ color:0xd6dde2, roughness:0.26, metalness:0.88, clearcoat:0.35 });
+
+  // A continuous telescopic overlap band: it adjusts like a collar strap, but sits flush
+  // inside the circular body, so the outside never becomes a C-shaped hard opening.
+  const overlap = tubeArc(R - tube * 0.22, tube * 0.16, center, span, matFlex, 28, 96);
+  overlap.scale.set(1, 1, bandFlat * 0.42);
+  overlap.castShadow = overlap.receiveShadow = true;
+  g.add(overlap);
+
+  g.add(flatArc(R - tube * 0.48, tube * 0.010, zFace * 0.18, center - span * 0.42, span * 0.84, matRail, 72));
+
+  for(const side of [-1, 1]){
+    const a = center + side * span * 0.44;
+    const seam = roundedPart(tube * 0.045, tube * 0.78, 0.024, matSeal, tube * 0.012);
+    placeOnRing(seam, a, R - tube * 0.03, zFace + 0.010);
+    g.add(seam);
+    const magnet = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.040, tube * 0.040, 0.018, 18), matMag);
+    magnet.rotation.x = Math.PI / 2;
+    magnet.position.set(Math.cos(a) * (R - tube * 0.38), Math.sin(a) * (R - tube * 0.38), zFace * 0.18);
+    g.add(magnet);
+  }
+
+  for(let i=-5;i<=5;i++){
+    const a = center + i * span * 0.060;
+    const tooth = roundedPart(tube * 0.026, tube * 0.15, 0.014, matRail, tube * 0.006);
+    placeOnRing(tooth, a, R - tube * 0.52, zFace * 0.18);
+    g.add(tooth);
+  }
+  g.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+  return g;
+}
+
+function makeHiddenWearOpening(S, R, tube, bandFlat, center, gap, matBand, matLiner, matSeal){
+  const g = new THREE.Group();
+  g.userData.isCollar = true;
+  const zFace = tube * bandFlat;
+  const matMag = new THREE.MeshPhysicalMaterial({ color:0xd6dde2, roughness:0.28, metalness:0.86, clearcoat:0.3 });
+  const matGrip = new THREE.MeshStandardMaterial({ color:0x05070a, roughness:0.88, metalness:0.05 });
+  const matSlideMark = new THREE.MeshBasicMaterial({ color:S.accent, transparent:true, opacity:0.96, depthWrite:false });
+  const matGap = new THREE.MeshStandardMaterial({ color:0x010204, roughness:0.94, metalness:0, transparent:true, opacity:0.08 });
+  const matHit = new THREE.MeshBasicMaterial({ color:0x000000, transparent:true, opacity:0.0, depthWrite:false, colorWrite:false });
+  const seams = [];
+  const magnets = [];
+  const teeth = [];
+
+  const remember = (obj)=>{
+    obj.userData.basePos = obj.position.clone();
+    obj.userData.baseRot = obj.rotation.clone();
+    obj.userData.baseScale = obj.scale.clone();
+    return obj;
+  };
+
+  const gapShadow = flatArc(R, tube * 0.58, zFace + 0.004, center - gap * 0.53, gap * 1.06, matGap, 42);
+
+  const sleeve = tubeArc(R, tube * 1.01, center, gap * 1.18, matBand, 62, 72);
+  sleeve.scale.set(1, 1, bandFlat);
+  sleeve.castShadow = sleeve.receiveShadow = true;
+  g.add(remember(sleeve));
+
+  // The soft overlap tongue slides along the ring path, so the C opening works like a
+  // curved telescopic sleeve instead of a part being pulled outward.
+  const tongue = tubeArc(R - tube * 0.20, tube * 0.12, center, gap * 0.86, matLiner, 24, 48);
+  tongue.scale.set(1, 1, bandFlat * 0.42);
+  tongue.castShadow = tongue.receiveShadow = true;
+  g.add(remember(tongue));
+
+  const handle = new THREE.Group();
+  handle.userData.isCOpenHandle = true;
+  placeOnRing(handle, center, R - tube * 0.06, zFace + 0.010);
+  const lip = roundedPart(tube * 0.78, tube * 0.058, 0.006, matGrip, tube * 0.016);
+  lip.userData.isCOpenHandle = true;
+  handle.add(lip);
+  for(let i=-1;i<=1;i++){
+    const groove = roundedPart(tube * 0.105, tube * 0.026, 0.004, matSlideMark, tube * 0.008);
+    groove.position.set(i * tube * 0.150, 0, 0.009);
+    groove.rotation.z = 0.54;
+    groove.userData.isCOpenHandle = true;
+    handle.add(groove);
+  }
+  const arrow = roundedPart(tube * 0.26, tube * 0.030, 0.004, matSlideMark, tube * 0.008);
+  arrow.position.set(tube * 0.46, 0, 0.009);
+  arrow.rotation.z = -0.58;
+  arrow.userData.isCOpenHandle = true;
+  handle.add(arrow);
+  const hit = roundedPart(tube * 1.28, tube * 0.76, 0.16, matHit, tube * 0.08);
+  hit.position.z = 0.035;
+  hit.userData.isCOpenHandle = true;
+  hit.castShadow = false;
+  hit.receiveShadow = false;
+  handle.add(hit);
+  g.add(remember(handle));
+
+  const hitArc = tubeArc(R, tube * 1.28, center, gap * 1.18, matHit, 12, 54);
+  hitArc.scale.set(1, 1, bandFlat * 1.12);
+  hitArc.userData.isCOpenHandle = true;
+  hitArc.castShadow = false;
+  hitArc.receiveShadow = false;
+  g.add(hitArc);
+
+  for(const side of [-1, 1]){
+    const a = center + side * gap / 2;
+    const seam = roundedPart(tube * 0.020, tube * 0.58, 0.007, matSeal, tube * 0.006);
+    placeOnRing(seam, a, R, zFace + 0.012);
+    seam.userData.cOpenSide = side;
+    g.add(remember(seam));
+    seams.push(seam);
+
+    const magnet = new THREE.Mesh(new THREE.CylinderGeometry(tube * 0.046, tube * 0.046, 0.020, 18), matMag);
+    magnet.rotation.x = Math.PI / 2;
+    magnet.position.set(Math.cos(a) * (R - tube * 0.34), Math.sin(a) * (R - tube * 0.34), zFace * 0.18);
+    magnet.userData.cOpenSide = side;
+    g.add(remember(magnet));
+    magnets.push(magnet);
+  }
+
+  for(let i=-2;i<=2;i++){
+    const tooth = roundedPart(tube * 0.035, tube * 0.18, 0.018, matGrip, tube * 0.008);
+    const a = center + i * gap * 0.16;
+    placeOnRing(tooth, a, R - tube * 0.46, zFace * 0.18);
+    g.add(remember(tooth));
+    teeth.push(tooth);
+  }
+
+  g.traverse(o=>{ if(o.isMesh && o !== hit && o !== hitArc) o.castShadow = o.receiveShadow = true; });
+  cOpenHandle = handle;
+  cOpenParts = { group:g, sleeve, tongue, handle, seams, magnets, teeth, gapShadow, center, gap, R, tube, zFace };
+  updateCOpenParts(0);
+  return g;
+}
+
+function updateCOpenParts(v){
+  if(!cOpenParts) return;
+  const p = cOpenParts;
+  const axisZ = new THREE.Vector3(0, 0, 1);
+  const applyAngular = (obj, angleOffset, zOffset = 0, rotOffset = 0, zScale = 1)=>{
+    if(!obj || !obj.userData.basePos) return;
+    obj.position.copy(obj.userData.basePos).applyAxisAngle(axisZ, angleOffset);
+    obj.position.z += zOffset;
+    obj.rotation.copy(obj.userData.baseRot);
+    obj.rotation.z += angleOffset + rotOffset;
+    if(obj.userData.baseScale){
+      obj.scale.set(obj.userData.baseScale.x, obj.userData.baseScale.y, obj.userData.baseScale.z * zScale);
+    }
+  };
+
+  const ease = THREE.MathUtils.smoothstep(v, 0, 1);
+  const slide = p.gap * 1.28 * ease;
+  const innerVisible = v < 0.36;
+  p.sleeve.visible = true;
+  p.tongue.visible = false;
+  p.handle.visible = true;
+  p.teeth.forEach(tooth=>{ tooth.visible = innerVisible; });
+  p.magnets.forEach(magnet=>{ magnet.visible = innerVisible; });
+  applyAngular(p.sleeve, slide, p.zFace * 0.020 * ease, 0, 0.99);
+  applyAngular(p.tongue, slide * 0.90, -p.zFace * 0.030 * ease, 0, 0.94);
+  applyAngular(p.handle, slide, p.zFace * 0.035 * ease, 0, 1);
+
+  p.seams.forEach(seam=>applyAngular(seam, 0, p.zFace * 0.012 * ease, 0, 1));
+  p.magnets.forEach(magnet=>{
+    const side = magnet.userData.cOpenSide || 0;
+    applyAngular(magnet, side > 0 ? slide : slide * 0.18, p.zFace * 0.010 * ease, 0, 1);
+  });
+  p.teeth.forEach((tooth, i)=>{
+    const offset = slide * (0.70 + i * 0.010);
+    applyAngular(tooth, offset, -p.zFace * 0.018 * ease, 0, 1);
+  });
+  if(p.gapShadow?.material){
+    p.gapShadow.material.opacity = 0;
+  }
+}
+
+function makeRingFeaturesOld(S, R, tube, bandFlat, size){
+  const g = new THREE.Group();
+  g.userData.isCollar = true;
+  const zFace = tube * bandFlat;
+  const ui = THREE.MathUtils.clamp(tube * 1.34, 0.22, 0.34);
+  const buttonAngle = Math.PI / 2 - 0.78;
+  const chargeAngle = Math.PI / 2 + 0.78;
+  const heartAngle = Math.PI - 0.55;
+  const tempAngle = -Math.PI + 0.55;
+  const matRecess = new THREE.MeshStandardMaterial({ color:0x05070a, roughness:0.58, metalness:0.28 });
+  const matSoft = new THREE.MeshPhysicalMaterial({ color:0x0b1015, roughness:0.34, metalness:0.18, clearcoat:0.8, clearcoatRoughness:0.12 });
+  const matGlass = new THREE.MeshPhysicalMaterial({ color:0x071116, roughness:0.08, metalness:0.10, clearcoat:1, clearcoatRoughness:0.03 });
+  const matSensorSeal = new THREE.MeshStandardMaterial({ color:0x020406, roughness:0.88, metalness:0.02 });
+  const matAcc = new THREE.MeshStandardMaterial({
+    color:S.accent,
+    roughness:0.32,
+    metalness:0.45,
+    emissive:S.accent,
+    emissiveIntensity:0.28
+  });
+  const matPin = new THREE.MeshStandardMaterial({ color:0xe8c87a, roughness:0.24, metalness:1.0 });
+
+  const makeSkinSensorWindow = (angle, type)=>{
+    const cluster = new THREE.Group();
+    const base = roundedPart(ui * 0.86, ui * 0.32, 0.004, matSensorSeal, ui * 0.045);
+    cluster.add(base);
+    const win = roundedPart(ui * 0.58, ui * 0.18, 0.003, matGlass, ui * 0.032);
+    win.position.z = 0.003;
+    cluster.add(win);
+    for(let i=-2;i<=2;i++){
+      const comb = roundedPart(ui * 0.014, ui * 0.13, 0.002, matSensorSeal, ui * 0.003);
+      comb.position.set(i * ui * 0.070, -ui * 0.19, 0.005);
+      cluster.add(comb);
+    }
+    if(type === 'heart'){
+      for(const [x, color] of [[-0.13,0x39ff88],[0.02,0x39ff88],[0.17,0xff5b55]]){
+        const led = new THREE.Mesh(new THREE.CylinderGeometry(ui * 0.026, ui * 0.026, 0.003, 16), new THREE.MeshBasicMaterial({ color }));
+        led.rotation.x = Math.PI / 2;
+        led.position.set(x * ui, 0, 0.006);
+        cluster.add(led);
+      }
+    } else {
+      const therm = new THREE.Mesh(new THREE.CylinderGeometry(ui * 0.050, ui * 0.050, 0.003, 22),
+        new THREE.MeshStandardMaterial({ color:0xffb454, roughness:0.24, metalness:0.38, emissive:0xffb454, emissiveIntensity:0.22 }));
+      therm.rotation.x = Math.PI / 2;
+      therm.position.z = 0.006;
+      cluster.add(therm);
+    }
+    // 贴肤传感窗在内侧背面，和外侧触控/充电面分离，且远离底部 C 型开合。
+    placeOnRing(cluster, angle, R - tube * 0.78, -zFace - 0.004);
+    placeOnRing(cluster, angle, R - tube * 0.78, -zFace - 0.004);
+    g.add(cluster);
+  };
+  makeSkinSensorWindow(heartAngle, 'heart');
+  makeSkinSensorWindow(tempAngle, 'temp');
+
+  // Capacitive touch key on the outer upper-right quadrant, reachable by hand and away from skin sensors.
+  const btn = new THREE.Group();
+  btn.userData.isButton = true;
+  const ab = buttonAngle;
+  const bx = Math.cos(ab) * R;
+  const by = Math.sin(ab) * R;
+  const pad = new THREE.Mesh(new THREE.CylinderGeometry(ui * 0.50, ui * 0.50, 0.006, 44), matSoft);
+  pad.rotation.x = Math.PI / 2;
+  pad.position.set(bx, by, zFace + 0.001);
+  btn.add(pad);
+  const glyph = new THREE.Mesh(new THREE.TorusGeometry(ui * 0.29, ui * 0.010, 8, 42), matAcc);
+  glyph.position.set(bx, by, zFace + 0.006);
+  btn.add(glyph);
+  const powerLed = new THREE.Mesh(new THREE.CircleGeometry(ui * 0.042, 18), new THREE.MeshBasicMaterial({ color:S.accent, side:THREE.DoubleSide }));
+  powerLed.position.set(bx, by, zFace + 0.008);
+  powerLed.userData.baseColor = new THREE.Color(S.accent);
+  btn.add(powerLed);
+  g.add(btn);
+
+  // Magnetic charging port on the opposite outer upper-left quadrant; it never sits against the pet's neck.
+  const ac = chargeAngle;
+  const cx = Math.cos(ac) * R;
+  const cy = Math.sin(ac) * R;
+  const tx = -Math.sin(ac);
+  const ty = Math.cos(ac);
+  const charge = roundedPart(ui * 1.02, ui * 0.44, 0.012, matRecess, ui * 0.060);
+  charge.rotation.z = ac - Math.PI / 2;
+  charge.position.set(cx, cy, zFace + 0.002);
+  g.add(charge);
+  for(let i = -1.5; i <= 1.5; i++){
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(ui * 0.036, ui * 0.036, 0.010, 16), matPin);
+    pin.rotation.x = Math.PI / 2;
+    pin.position.set(cx + i * ui * 0.18 * tx, cy + i * ui * 0.18 * ty, zFace + 0.010);
+    g.add(pin);
+  }
+
+  g.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+  return { group:g, powerLed, podGroup:g };
+}
+
+// Clean production surface pass: electronics live inside the ring; the outside only
+// shows flush position marks for touch, charging, and skin-facing sensors.
+function makeRingFeatures(S, R, tube, bandFlat, size){
+  const g = new THREE.Group();
+  g.userData.isCollar = true;
+  const zFace = tube * bandFlat;
+  const ui = THREE.MathUtils.clamp(tube * 1.34, 0.22, 0.34);
+  const buttonAngle = Math.PI / 2 - 0.78;
+  const chargeAngle = Math.PI / 2 + 0.78;
+  const cAxis = -Math.PI / 2;
+  const sensorOffset = 1.08;
+  const heartAngle = cAxis - sensorOffset;
+  const tempAngle = cAxis + sensorOffset;
+
+  const matRecess = new THREE.MeshStandardMaterial({ color:0x05070a, roughness:0.62, metalness:0.20 });
+  const matPin = new THREE.MeshStandardMaterial({ color:0xe8c87a, roughness:0.24, metalness:1.0 });
+  const matSurface = new THREE.MeshBasicMaterial({ color:S.accent, transparent:true, opacity:0.92, side:THREE.DoubleSide, depthWrite:false });
+  const matSensorSeal = new THREE.MeshBasicMaterial({ color:0x05070a, transparent:true, opacity:0.94, side:THREE.DoubleSide, depthWrite:false });
+
+  const makeSkinSensorMark = (angle, type)=>{
+    const cluster = new THREE.Group();
+    const outline = new THREE.Mesh(new THREE.RingGeometry(ui * 0.145, ui * 0.168, 28), matSensorSeal);
+    outline.scale.x = 1.82;
+    cluster.add(outline);
+    if(type === 'heart'){
+      for(const [x, color] of [[-0.13,0x39ff88],[0.02,0x39ff88],[0.17,0xff5b55]]){
+        const led = new THREE.Mesh(new THREE.CircleGeometry(ui * 0.024, 14), new THREE.MeshBasicMaterial({ color, side:THREE.DoubleSide, depthWrite:false }));
+        led.position.set(x * ui, 0, 0.003);
+        cluster.add(led);
+      }
+    } else {
+      const dot = new THREE.Mesh(new THREE.CircleGeometry(ui * 0.050, 22), new THREE.MeshBasicMaterial({ color:0xffb454, side:THREE.DoubleSide, depthWrite:false }));
+      dot.position.z = 0.003;
+      cluster.add(dot);
+      const stem = new THREE.Mesh(new THREE.PlaneGeometry(ui * 0.030, ui * 0.21), matSensorSeal);
+      stem.position.set(0, ui * 0.040, 0.004);
+      cluster.add(stem);
+    }
+    placeOnRing(cluster, angle, R - tube * 0.80, -zFace - 0.001);
+    g.add(cluster);
+  };
+  makeSkinSensorMark(heartAngle, 'heart');
+  makeSkinSensorMark(tempAngle, 'temp');
+
+  const btn = new THREE.Group();
+  btn.userData.isButton = true;
+  const bx = Math.cos(buttonAngle) * R;
+  const by = Math.sin(buttonAngle) * R;
+  const glyph = new THREE.Mesh(new THREE.RingGeometry(ui * 0.26, ui * 0.30, 44), matSurface);
+  glyph.position.set(bx, by, zFace + 0.003);
+  btn.add(glyph);
+  const powerLed = new THREE.Mesh(new THREE.CircleGeometry(ui * 0.035, 18), new THREE.MeshBasicMaterial({ color:S.accent, side:THREE.DoubleSide, depthWrite:false }));
+  powerLed.position.set(bx, by, zFace + 0.004);
+  powerLed.userData.baseColor = new THREE.Color(S.accent);
+  btn.add(powerLed);
+  g.add(btn);
+
+  const ac = chargeAngle;
+  const cx = Math.cos(ac) * R;
+  const cy = Math.sin(ac) * R;
+  const tx = -Math.sin(ac);
+  const ty = Math.cos(ac);
+  const charge = roundedPart(ui * 0.92, ui * 0.36, 0.003, matRecess, ui * 0.050);
+  charge.rotation.z = ac - Math.PI / 2;
+  charge.position.set(cx, cy, zFace + 0.002);
+  g.add(charge);
+  for(let i = -1.5; i <= 1.5; i++){
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(ui * 0.026, ui * 0.026, 0.003, 14), matPin);
+    pin.rotation.x = Math.PI / 2;
+    pin.position.set(cx + i * ui * 0.16 * tx, cy + i * ui * 0.16 * ty, zFace + 0.005);
+    g.add(pin);
+  }
+
+  g.traverse(o=>{ if(o.isMesh) o.castShadow = o.receiveShadow = true; });
+  return { group:g, powerLed, podGroup:g };
+}
+
+/* 推拉杆定位（按 curRodT 沿轨道放置）*/
+function positionRod(){
+  if(!adjusterRod) return;
+  const ang = trackA0 + curRodT*(trackA1-trackA0);
+  adjusterRod.position.set(Math.cos(ang)*rodRadius, Math.sin(ang)*rodRadius, rodZ);
+  adjusterRod.rotation.z = ang - Math.PI/2;
+}
+
+/* 设置目标颈围（平滑动画 + 推拉杆滑动，不重建）*/
+function setSizeTarget(cm, doBroadcast){
+  state.size = cm;
+  document.getElementById('sizeVal').textContent = cm;
+  document.getElementById('petType').textContent = petTypeOf(cm);
+  const sz = document.getElementById('size'); if(sz) sz.value = cm;
+  targetScale = displayScale(cm);
+  syncPresetUI();
+  if(doBroadcast) broadcastState();
+}
+
+function setScalePreset(size, tubePercent, doBroadcast = true){
+  state.size = size;
+  state.tubeScale = tubePercent / 100;
+  const sz = document.getElementById('size');
+  const tb = document.getElementById('tube');
+  if(sz) sz.value = size;
+  if(tb) tb.value = tubePercent;
+  document.getElementById('sizeVal').textContent = size;
+  document.getElementById('petType').textContent = petTypeOf(size);
+  document.getElementById('tubeVal').textContent = tubePercent;
+  targetScale = displayScale(size);
+  syncPresetUI();
+  buildCollar();
+  if(doBroadcast) broadcastState();
+}
+
+function syncPresetUI(){
+  const presets = document.querySelectorAll('#scalePresets .scale-preset');
+  if(!presets.length) return;
+  const size = Math.round(state.size);
+  const tube = Math.round(state.tubeScale * 100);
+  presets.forEach(btn=>{
+    btn.classList.toggle('on', +btn.dataset.size === size && +btn.dataset.tube === tube);
+  });
+}
+
+/* 拖动推拉杆时：把鼠标射线投到环平面，求角度 */
+const _dragRay = new THREE.Ray();
+const _dragInv = new THREE.Matrix4();
+const _dragPoint = new THREE.Vector3();
+function pointerToRingPoint(){
+  if(!collarGroup) return null;
+  collarGroup.updateMatrixWorld();
+  _dragRay.copy(raycaster.ray);
+  _dragInv.copy(collarGroup.matrixWorld).invert();
+  _dragRay.applyMatrix4(_dragInv);
+  if(Math.abs(_dragRay.direction.z) < 1e-6) return null;
+  const t = -_dragRay.origin.z / _dragRay.direction.z;
+  if(t < 0) return null;
+  return _dragPoint.set(
+    _dragRay.origin.x + t * _dragRay.direction.x,
+    _dragRay.origin.y + t * _dragRay.direction.y,
+    0
+  );
+}
+function pointerToRingAngle(){
+  const p = pointerToRingPoint();
+  return p ? Math.atan2(p.y, p.x) : null;
+}
+function pointerOnCOpenZone(){
+  if(!cOpenParts) return false;
+  const p = pointerToRingPoint();
+  if(!p) return false;
+  const a = Math.atan2(p.y, p.x);
+  const d = Math.abs(signedAngleDelta(a, cOpenParts.center));
+  const r = Math.hypot(p.x, p.y);
+  return d <= cOpenParts.gap * 0.78 && r >= cOpenParts.R - cOpenParts.tube * 2.7 && r <= cOpenParts.R + cOpenParts.tube * 2.7;
+}
+function pointerInScreenCZone(e){
+  return e.clientX >= innerWidth * 0.30 && e.clientX <= innerWidth * 0.72 &&
+    e.clientY >= innerHeight * 0.55 && e.clientY <= innerHeight * 0.84;
+}
+
+function signedAngleDelta(a, b){
+  let d = a - b;
+  while(d > Math.PI) d -= Math.PI * 2;
+  while(d < -Math.PI) d += Math.PI * 2;
+  return d;
+}
+
+/* ---------- 形态 B：独立夹扣模块（夹在任意项圈上） ----------
+ * 一条中性尼龙带（代表用户已有的任意项圈）+ 一个夹在底部的全功能胶囊模块。
+ * 心率/呼吸走雷达路线（穿透毛发+带体，非接触），与形态 A 的接触式 PPG 区分。
+ */
+function buildClipCollar(){
+  const S = STYLES[state.style];
+  const R = REF_R;
+  const tube = S.tube * state.tubeScale;
+
+  // 平尼龙项圈：固定中性色，强调"夹到任意项圈上"
+  const matBand = new THREE.MeshStandardMaterial({ color:0x2b2e34, roughness:0.92, metalness:0.0 });
+  const matStitch = new THREE.MeshStandardMaterial({ color:0x3a3e46, roughness:0.8, metalness:0 });
   const matPod  = new THREE.MeshPhysicalMaterial({ color:S.pod, roughness:S.podRough, metalness:S.podMetal, envMapIntensity:1.3, clearcoat:1, clearcoatRoughness:0.2 });
   const matAcc  = new THREE.MeshStandardMaterial({ color:S.accent, roughness:0.3, metalness:0.4, emissive:S.accent, emissiveIntensity:0.15 });
   const matBuckle = new THREE.MeshStandardMaterial({ color:S.buckle, roughness:0.25, metalness:S.buckleMetal, envMapIntensity:1.5 });
-  const matGlass = new THREE.MeshStandardMaterial({ color:0x05070a, roughness:0.08, metalness:0.2, envMapIntensity:1.6 });
-  const matGasket = new THREE.MeshStandardMaterial({ color:0x1a1d22, roughness:0.9, metalness:0.0 });
-  // 爆炸视图内部精密件材质
+  const matRadar = new THREE.MeshStandardMaterial({ color:0x0a1018, roughness:0.25, metalness:0.3, emissive:S.accent, emissiveIntensity:0.4 });
   const matPCB = new THREE.MeshStandardMaterial({ color:0x0c2a1e, roughness:0.55, metalness:0.3, envMapIntensity:1.0 });
   const matGold = new THREE.MeshStandardMaterial({ color:0xe8c87a, roughness:0.25, metalness:1.0, envMapIntensity:1.6 });
   const matInterior = new THREE.MeshStandardMaterial({ color:0x050608, roughness:0.92, metalness:0.0 });
   const matGlow = new THREE.MeshStandardMaterial({ color:S.accent, roughness:0.4, metalness:0.3, emissive:S.accent, emissiveIntensity:0.6 });
-  if(S.fabric){ matBand.roughness = 0.88; matBand.metalness = 0; }
-  const M = {matPod, matAcc, matBuckle, matGlass, matGasket, matPCB, matGold, matInterior, matGlow, matBand, S};
+  const M = {matPod, matAcc, matBuckle, matRadar, matPCB, matGold, matInterior, matGlow, S};
 
-  // ---- 1. 表带主体 ----
+  // ---- 1. 平尼龙带体（带缝线，像真实项圈） ----
   const gap = 0.5;
-  const band = new THREE.Mesh(
-    new THREE.TorusGeometry(R, tube, 24, 220, Math.PI*2 - gap), matBand);
+  const band = new THREE.Mesh(new THREE.TorusGeometry(R, tube, 24, 220, Math.PI*2 - gap), matBand);
   band.rotation.z = -Math.PI/2 + gap/2;
   band.scale.set(1,1, S.bandFlat);
   band.castShadow = band.receiveShadow = true;
   collarGroup.add(band);
-
-  // ---- 2. 缝线（织物/皮质风格） ----
-  if(S.fabric){
-    for(const side of [-1,1]){
-      const stitch = new THREE.Mesh(
-        new THREE.TorusGeometry(R, tube*0.018, 6, 200, Math.PI*2-gap),
-        new THREE.MeshStandardMaterial({color:S.stitch, roughness:.6, metalness:.1}));
-      stitch.rotation.z = -Math.PI/2 + gap/2;
-      stitch.position.z = side*tube*S.bandFlat*0.7;
-      collarGroup.add(stitch);
-    }
+  for(const side of [-1,1]){
+    const stitch = new THREE.Mesh(new THREE.TorusGeometry(R, tube*0.02, 6, 200, Math.PI*2-gap), matStitch);
+    stitch.rotation.z = -Math.PI/2 + gap/2;
+    stitch.position.z = side*tube*S.bandFlat*0.7;
+    collarGroup.add(stitch);
   }
 
-  // ---- 3. 各传感器模块（含安装结构） ----
-  SENSORS.forEach((s, idx)=>{
-    const node = makeModule(s, R, tube, M);
-    node.group.userData.sensorIndex = idx;   // 供点击射线检测回溯
-    collarGroup.add(node.group);
-    moduleGroups.push(node.group);
-    if(node.led) leds.push(node.led);
-    if(node.lift) lifts.push(node.lift);
-    if(s.big){ podGroup = node.group; detailTags = node.detailTags||[]; }
+  // ---- 2. 独立夹扣模块（位于项圈底部，夹住带体） ----
+  const node = makeClipModule(R, tube, M);
+  node.group.userData.sensorIndex = 0;
+  collarGroup.add(node.group);
+  moduleGroups.push(node.group);
+  podGroup = node.group;
+  if(node.led) leds.push(node.led);
+  if(node.lift) lifts.push(node.lift);
+  detailTags = node.detailTags || [];
+
+  // ---- 4. 五合一功能标注（扇形分布在模块周围） ----
+  SENSORS.forEach((s, i)=>{
     const tag = makeTag(s);
-    tag.position.copy(node.labelPos);
+    const a0 = Math.PI*1.5;                       // 模块所在角（底部）
+    const ta = a0 + (i-2)*0.30;                   // 五个标签横向展开
+    const tr = R + tube + 0.58;
+    tag.position.set(Math.cos(ta)*tr, Math.sin(ta)*tr, 0.12);
     collarGroup.add(tag);
     tagObjs.push(tag);
   });
+}
 
-  // ---- 4. D 形挂环 + 吊牌 ----
-  const hangY = -(R + tube + 0.18);
-  const dRing = new THREE.Mesh(new THREE.TorusGeometry(0.15,0.04,16,40), matBuckle);
-  dRing.position.set(0, hangY, 0); dRing.castShadow = true;
-  collarGroup.add(dRing);
-  const tagPlate = makeHangTag(S, matBuckle, matAcc);
-  tagPlate.position.set(0, hangY-0.42, 0);
-  collarGroup.add(tagPlate);
+/* ---------- 构建夹扣模块（全功能单体胶囊） ---------- */
+function makeClipModule(R, tube, M){
+  const g = new THREE.Group();
+  const a = Math.PI*1.5;                          // 底部
+  const px = Math.cos(a)*R, py = Math.sin(a)*R;   // (0,-R)
+  const ms = state.moduleScale;
+  // 单体模块尺寸（略大，承载全部 5 项功能）
+  const w = 1.18*ms, hgt = 0.80*ms, d = 0.46*ms;
 
-  collarGroup.rotation.x = -0.62;
-  // 关键：整体等比缩放，保证任何颈围下比例恒定、且不溢出视野
-  collarGroup.scale.setScalar(displayScale(state.size));
-  scene.add(collarGroup);
+  const lift = new THREE.Group();                 // 爆炸时整体升起（脱离带体）
+  const mount = new THREE.Group();                // 留在原位的内部精密件
+  g.add(mount); g.add(lift);
+  const phys = (c,r,m,cc)=> new THREE.MeshPhysicalMaterial({color:c,roughness:r,metalness:m,clearcoat:cc??0,clearcoatRoughness:0.2,envMapIntensity:1.3});
 
-  applyTagVisibility();
-  applyDetailVisibility();
-  updateSpecs();
+  // 主体外壳：圆润药丸形（沿切向 x 拉长）
+  const shell = new THREE.Mesh(new RoundedBoxGeometry(w, hgt, d, 5, Math.min(0.18, d*0.42)), M.matPod);
+  lift.add(shell);
+  // 顶部装饰条（logo 位）
+  const topStrip = new THREE.Mesh(new RoundedBoxGeometry(w*0.66, hgt*0.14, d*0.12, 2, 0.02), phys(M.S.accent,0.3,0.5,0.6));
+  topStrip.position.set(0, hgt*0.40, d/2); lift.add(topStrip);
+  // GPS 天线凸起（外侧顶部）
+  const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.05,0.14,14), M.matBuckle);
+  ant.position.set(w*0.34, hgt*0.26, d/2+0.08); ant.rotation.x = Math.PI/2; lift.add(ant);
+  // 呼吸 LED
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.05,16,16), new THREE.MeshBasicMaterial({color:M.S.accent}));
+  led.position.set(-w*0.34, hgt*0.05, d/2+0.02);
+  led.userData.baseColor = new THREE.Color(M.S.accent);
+  lift.add(led);
+  // 充电触点（底部磁吸 pogo pin）
+  for(let i=0;i<2;i++){
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.024,0.024,0.04,12), M.matBuckle);
+    pin.rotation.x = Math.PI/2; pin.position.set((i?0.09:-0.09), -hgt*0.44, d/2+0.005); lift.add(pin);
+  }
+
+  // ---- 夹扣结构：两片弹簧夹爪跨住带体（内侧 -z 朝皮肤） ----
+  const clipMat = phys(M.S.buckle, 0.3, 0.85);
+  for(const sx of [-1,1]){
+    const jaw = new THREE.Mesh(new RoundedBoxGeometry(0.07, hgt*0.86, tube*2.6, 2, 0.02), clipMat);
+    jaw.position.set(sx*w*0.40, 0, -tube*0.15);
+    lift.add(jaw);
+  }
+
+  // ---- 雷达窗口（内侧/朝皮肤面，-z 方向；非接触穿透毛发） ----
+  const radar = new THREE.Mesh(new THREE.CircleGeometry(d*0.30, 32), M.matRadar);
+  radar.position.set(0, 0, -d/2 - 0.005); lift.add(radar);
+  for(let i=1;i<=2;i++){
+    const rm = new THREE.Mesh(new THREE.RingGeometry(d*0.09*i, d*0.09*i+0.008, 36),
+      new THREE.MeshBasicMaterial({color:M.S.accent, transparent:true, opacity:0.5, side:THREE.DoubleSide}));
+    rm.position.set(0,0,-d/2-0.01); lift.add(rm);
+  }
+
+  // ---- 内部精密结构（爆炸视图外壳升起后露出） ----
+  const back = -d/2;
+  const well = new THREE.Mesh(new RoundedBoxGeometry(w*0.82, hgt*0.82, 0.03, 3, 0.02), M.matInterior);
+  well.position.z = back + 0.05; mount.add(well);
+  const pcb = new THREE.Mesh(new RoundedBoxGeometry(w*0.72, hgt*0.72, 0.022, 3, 0.01), M.matPCB);
+  pcb.position.z = back + 0.08; mount.add(pcb);
+  for(let i=0;i<3;i++) for(let j=0;j<2;j++){
+    const pad = new THREE.Mesh(new THREE.CircleGeometry(0.018,16), M.matGold);
+    pad.position.set(-w*0.28+i*w*0.28, -hgt*0.25+j*hgt*0.5, back+0.1); mount.add(pad);
+  }
+  // 雷达芯片（内部，发光）
+  const radarChip = new THREE.Mesh(new RoundedBoxGeometry(w*0.30, hgt*0.30, 0.05, 3, 0.02), M.matGlow);
+  radarChip.position.set(0,0,back+0.1); mount.add(radarChip);
+
+  shell.castShadow = shell.receiveShadow = true;
+
+  // ---- 定位：贴在带体底部，略外移使夹爪能跨住带体 ----
+  g.position.set(px, py, 0);
+  g.rotation.z = a - Math.PI/2;                   // 切向
+  g.translateZ(d*0.12);
+
+  lift.userData = { baseZ:0, explodeZ:1.05, d };
+
+  // ---- 安装详图标注（详图模式显示） ----
+  let detailTags = [];
+  const mk = (text, sub, parent, lx, ly, lz)=>{
+    const el = document.createElement('div'); el.className='tag dtag';
+    el.innerHTML = `<div class="pin pin-d"><b>${text}</b><i>${sub}</i></div>`;
+    const o = new CSS2DObject(el); o.position.set(lx,ly,lz); o.userData.isDetail=true;
+    parent.add(o); detailTags.push(o); return o;
+  };
+  mk('弹簧夹爪','适配 15–25mm 带体', lift, w*0.62, hgt*0.32, -tube*0.15);
+  mk('GPS 天线','5-GNSS · 朝外', lift, w*0.58, hgt*0.5, d/2);
+  mk('雷达传感','穿透毛发·非接触', lift, -w*0.62, 0, -d/2);
+  mk('PCB 主板','电池+主控+IMU', mount, w*0.6, -hgt*0.3, back+0.08);
+  mk('磁吸触点','充电+数据', lift, 0, -hgt*0.5, d/2+0.02);
+
+  return { group:g, led, lift, detailTags };
 }
 
 /* ---------- 构建单个传感器模块（含安装结构 + 爆炸视图分层） ---------- */
@@ -682,6 +1581,16 @@ function disposeGroup(grp){
 
 /* ---------- UI 构建与交互 ---------- */
 function buildUI(){
+  // 产品形态切换
+  document.querySelectorAll('#formSwitch .fs-opt').forEach(opt=>{
+    opt.onclick = ()=>{
+      if(opt.classList.contains('on')) return;
+      state.form = opt.dataset.form;
+      document.querySelectorAll('#formSwitch .fs-opt').forEach(o=>o.classList.toggle('on', o===opt));
+      buildCollar();
+    };
+  });
+
   // 风格色板
   const wrap = document.getElementById('styles');
   for(const [key,S] of Object.entries(STYLES)){
@@ -699,15 +1608,17 @@ function buildUI(){
     wrap.appendChild(div);
   }
 
-  // 尺寸滑块
+  // 尺寸滑块（平滑动画 + 推拉杆滑动，不再重建）
   const sz = document.getElementById('size');
-  sz.oninput = ()=>{ state.size = +sz.value; document.getElementById('sizeVal').textContent = sz.value;
-    document.getElementById('petType').textContent = petTypeOf(state.size); buildCollar(); broadcastState(); };
+  sz.oninput = ()=>{ setSizeTarget(+sz.value, true); };
   document.getElementById('petType').textContent = petTypeOf(state.size);
+  document.querySelectorAll('#scalePresets .scale-preset').forEach(btn=>{
+    btn.onclick = ()=> setScalePreset(+btn.dataset.size, +btn.dataset.tube, true);
+  });
 
   // 项圈带宽滑块
   const tb = document.getElementById('tube');
-  tb.oninput = ()=>{ state.tubeScale = +tb.value/100; document.getElementById('tubeVal').textContent = tb.value; buildCollar(); broadcastState(); };
+  tb.oninput = ()=>{ state.tubeScale = +tb.value/100; document.getElementById('tubeVal').textContent = tb.value; syncPresetUI(); buildCollar(); broadcastState(); };
   // 模块大小滑块
   const msEl = document.getElementById('modSize');
   msEl.oninput = ()=>{ state.moduleScale = +msEl.value/100; document.getElementById('modVal').textContent = msEl.value; buildCollar(); broadcastState(); };
@@ -722,6 +1633,7 @@ function buildUI(){
   document.getElementById('btnReset').onclick = resetView;
   document.getElementById('btnShot').onclick = screenshot;
   document.getElementById('btnExport').onclick = exportGLB;
+  document.getElementById('btnWear').onclick = openWearDemo;
 }
 
 function bindToggle(id, key, cb){
@@ -773,21 +1685,105 @@ function setupInteraction(){
   pointer = new THREE.Vector2();
   let down = null;
   const dom = renderer.domElement;
-  dom.addEventListener('pointerdown', e=>{ down = {x:e.clientX, y:e.clientY, t:performance.now()}; });
+  const setPointer = (e)=>{ pointer.x = (e.clientX/innerWidth)*2-1; pointer.y = -(e.clientY/innerHeight)*2+1; };
+
+  dom.addEventListener('pointerdown', e=>{
+    down = {x:e.clientX, y:e.clientY, t:performance.now()};
+    setPointer(e); raycaster.setFromCamera(pointer, camera);
+    const cOpenTarget = cOpenParts?.group || cOpenHandle;
+    const cOpenHit = cOpenTarget && raycaster.intersectObject(cOpenTarget, true).length;
+    if(state.form === 'integrated' && (cOpenHit || pointerOnCOpenZone() || pointerInScreenCZone(e))){
+      draggingCOpen = true;
+      cOpenDragStart = { x:e.clientX, y:e.clientY, angle:pointerToRingAngle(), value:targetCOpen };
+      cOpenRestoreSpin = state.spin;
+      state.spin = false;
+      controls.enabled = false;
+      if(dom.setPointerCapture) dom.setPointerCapture(e.pointerId);
+      return;
+    }
+    // 按住推拉杆 → 开始拖动调大小（禁用轨道旋转）
+    if(adjusterRod && raycaster.intersectObject(adjusterRod, true).length){
+      draggingRod = true; controls.enabled = false;
+    }
+  });
+  dom.addEventListener('pointermove', e=>{
+    if(draggingCOpen && cOpenDragStart){
+      setPointer(e); raycaster.setFromCamera(pointer, camera);
+      const screenSlide = (e.clientX - cOpenDragStart.x) / 180;
+      const ang = pointerToRingAngle();
+      let angularSlide = screenSlide;
+      if(ang !== null && cOpenDragStart.angle !== null){
+        angularSlide = signedAngleDelta(ang, cOpenDragStart.angle) / 0.92;
+      }
+      const alongSlide = Math.abs(angularSlide) > Math.abs(screenSlide) ? angularSlide : screenSlide;
+      targetCOpen = THREE.MathUtils.clamp(cOpenDragStart.value + alongSlide, 0, 1);
+      return;
+    }
+    if(!draggingRod) return;
+    setPointer(e); raycaster.setFromCamera(pointer, camera);
+    const ang = pointerToRingAngle();
+    if(ang===null) return;
+    let tt = (ang - trackA0)/(trackA1-trackA0);
+    tt = Math.max(0, Math.min(1, tt));
+    setSizeTarget(Math.round(16 + tt*44), true);
+  });
   dom.addEventListener('pointerup', e=>{
+    if(draggingCOpen){
+      const moved = cOpenDragStart ? Math.hypot(e.clientX - cOpenDragStart.x, e.clientY - cOpenDragStart.y) > 7 : true;
+      if(moved){
+        const dx = cOpenDragStart ? e.clientX - cOpenDragStart.x : 0;
+        const startedOpen = cOpenDragStart && cOpenDragStart.value > 0.5;
+        targetCOpen = startedOpen
+          ? (targetCOpen < 0.72 || dx < -20 ? 0 : 1)
+          : (targetCOpen > 0.22 || dx > 20 ? 1 : 0);
+      } else {
+        targetCOpen = cOpenDragStart ? cOpenDragStart.value : targetCOpen;
+      }
+      draggingCOpen = false;
+      cOpenDragStart = null;
+      state.spin = cOpenRestoreSpin;
+      controls.enabled = true;
+      if(dom.releasePointerCapture && (!dom.hasPointerCapture || dom.hasPointerCapture(e.pointerId))) dom.releasePointerCapture(e.pointerId);
+      flashHint(moved
+        ? (targetCOpen > 0.5 ? 'C 型滑套已沿环滑开 · 开口可绕入脖颈' : 'C 型滑套已沿环闭合 · 磁吸锁止')
+        : '按住底部亮色滑动标志，沿圆环方向拖动开合');
+      down = null;
+      return;
+    }
+    if(draggingRod){ draggingRod=false; controls.enabled=true; down=null; return; }
     if(!down) return;
     const dx=e.clientX-down.x, dy=e.clientY-down.y, dt=performance.now()-down.t;
     down=null;
     if(dx*dx+dy*dy>30 || dt>450) return;   // 拖动，非点击
-    pointer.x = (e.clientX/innerWidth)*2-1;
-    pointer.y = -(e.clientY/innerHeight)*2+1;
-    raycaster.setFromCamera(pointer, camera);
+    setPointer(e); raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(moduleGroups, true);
     if(hits.length){
       let o = hits[0].object;
-      while(o && o.userData.sensorIndex===undefined) o=o.parent;
-      if(o) openDetail(SENSORS[o.userData.sensorIndex]);
+      let btn=null, collar=null, sidx=undefined, cur=o;
+      while(cur){                              // 向上找标记
+        if(cur.userData.isButton) btn=cur;
+        if(cur.userData.isCollar) collar=cur;
+        if(cur.userData.sensorIndex!==undefined && sidx===undefined) sidx=cur.userData.sensorIndex;
+        cur=cur.parent;
+      }
+      if(btn){ togglePower(); return; }        // 触控按钮：开关机
+      if(collar){ openInternals(); return; }   // 净面环：进入内部结构页
+      if(sidx!==undefined){ openDetail(SENSORS[sidx]); return; }
     }
+  });
+  dom.addEventListener('pointercancel', e=>{
+    if(draggingCOpen){
+      draggingCOpen = false;
+      cOpenDragStart = null;
+      state.spin = cOpenRestoreSpin;
+      controls.enabled = true;
+      if(dom.releasePointerCapture && (!dom.hasPointerCapture || dom.hasPointerCapture(e.pointerId))) dom.releasePointerCapture(e.pointerId);
+    }
+    if(draggingRod){
+      draggingRod = false;
+      controls.enabled = true;
+    }
+    down = null;
   });
 }
 
@@ -826,12 +1822,38 @@ function showModuleCard(s){
 }
 
 function updateSpecs(){
-  const items = [
-    ['5','颗','传感器'], [state.size,'cm','颈围'],
-    ['IP67','','防水等级'], ['7','天','续航']
-  ];
+  const items = state.form==='clip'
+    ? [['1','体','夹扣模块'], ['≤20','g','模块重量'], ['IP68','','防水等级'], ['14','天','续航']]
+    : [[state.size,'cm','展示颈围'], ['IP68','','防水等级'], ['14','天','续航'], ['双方案','','佩戴适配']];
   document.getElementById('specs').innerHTML = items.map(([n,u,l])=>
     `<div class="spec"><b>${n}<em>${u}</em></b><span>${l}</span></div>`).join('');
+}
+
+/* ---------- 按形态显隐无关控件（净面环：隐藏标注/爆炸/模块大小）---------- */
+function applyFormUI(){
+  const clip = state.form === 'clip';
+  const show = el => { if(el) el.style.display = clip ? '' : 'none'; };
+  show(document.getElementById('rowTags'));
+  show(document.getElementById('rowDetail'));
+  show(document.getElementById('rowModSize'));
+  const h = document.getElementById('hint');
+  if(h) h.textContent = clip
+    ? '拖动旋转 · 滚轮缩放 · 右键平移 · 点击模块查看详情'
+    : '沿圆环方向拖动底部分型线打开 C 型滑套 · 点击圆环查看内部结构';
+}
+
+/* 触控按钮：开关机 */
+let hintTimer = null;
+function flashHint(msg){
+  const h = document.getElementById('hint');
+  if(!h) return;
+  clearTimeout(hintTimer);
+  h.textContent = msg;
+  hintTimer = setTimeout(applyFormUI, 1400);   // 恢复形态对应提示
+}
+function togglePower(){
+  state.power = !state.power;
+  flashHint(state.power ? '◉ 已开机 · 呼吸灯激活' : '◯ 已关机');
 }
 
 /* ---------- 视角 / 截图 / 导出 ---------- */
@@ -863,8 +1885,28 @@ function exportGLB(){
 /* ---------- 渲染循环 ---------- */
 function animate(){
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
-  if(state.spin && collarGroup){ collarGroup.rotation.y += 0.004; }
+  const dt = Math.min(clock.getDelta(), 0.033);
+  const t = clock.elapsedTime;
+
+  // ---- 平滑尺寸缩放 + 推拉杆滑动（不重建）----
+  if(collarGroup){
+    const cur = collarGroup.scale.x;
+    if(Math.abs(cur - targetScale) > 1e-4) collarGroup.scale.setScalar(cur + (targetScale - cur)*0.18);
+  }
+  if(adjusterRod){
+    const tt = (state.size-16)/(60-16);
+    if(Math.abs(tt - curRodT) > 1e-4){ curRodT += (tt - curRodT)*0.22; positionRod(); }
+  }
+  if(cOpenParts){
+    cOpenValue += (targetCOpen - cOpenValue) * 0.18;
+    updateCOpenParts(cOpenValue);
+  }
+
+  const spinTarget = state.spin && collarGroup && !draggingCOpen && !draggingRod && !state.detail ? 0.28 : 0;
+  autoSpinSpeed += (spinTarget - autoSpinSpeed) * 0.08;
+  if(collarGroup && Math.abs(autoSpinSpeed) > 0.0001){
+    collarGroup.rotation.y += autoSpinSpeed * dt;
+  }
 
   // ---- 爆炸视图插值（外壳沿径向升起 / 回落）----
   if(lifts.length){
@@ -895,6 +1937,23 @@ function animate(){
       led.material.color.copy(led.userData.baseColor).multiplyScalar(0.45 + ph*0.85);
       led.scale.setScalar(state.pulse ? (0.85 + ph*0.5) : 1);
     });
+  }
+  // 净面环装饰嵌线呼吸发光
+  if(glowMats.length){
+    glowMats.forEach((m,i)=>{
+      if(!state.power){ m.emissiveIntensity = 0.02; return; }
+      const ph = state.pulse ? (Math.sin(t*2.2 + i*1.3)*0.5+0.5) : 0.6;
+      m.emissiveIntensity = 0.15 + ph*0.45;
+    });
+  }
+  // 触控按钮开关机指示灯
+  if(powerLed){
+    if(!state.power){ powerLed.visible = false; }
+    else {
+      powerLed.visible = true;
+      const ph = state.pulse ? (Math.sin(t*2.4)*0.5+0.5) : 0.7;
+      powerLed.material.color.copy(powerLed.userData.baseColor).multiplyScalar(0.5 + ph*0.8);
+    }
   }
   controls.update();
   renderer.render(scene, camera);
